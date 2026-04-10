@@ -160,6 +160,27 @@ namespace CRUDMahasiswaADO
             }
         }
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+
+                string query = @"UPDATE Mahasiswa
+                                SET Nama = @Nama,
+                                JenisKelamin = @JK,
+                                TanggalLahir = @TanggalLahir,
+                                Alamat = @Alamat,
+                                KodeProdi = @KodeProdi
+                                WHERE NIM = @NIM";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
+        }
+
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -191,11 +212,6 @@ namespace CRUDMahasiswaADO
         }
 
         private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button4_Click(object sender, EventArgs e)
         {
 
         }
