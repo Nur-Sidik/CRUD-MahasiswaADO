@@ -97,6 +97,42 @@ namespace CRUDMahasiswaADO
                 {
                     conn.Open();
                 }
+
+                if (textNIM.Text == "")
+                {
+                    MessageBox.Show("NIM harus diisi");
+                    textNIM.Focus();
+                    return;
+                }
+
+                if (textNama.Text == "")
+                {
+                    MessageBox.Show("Nama harus diisi");
+                    textNama.Focus();
+                    return;
+                }
+
+                if (comboBoxJK.Text == "")
+                {
+                    MessageBox.Show("Jenis Kelamin harus dipilih");
+                    comboBoxJK.Focus();
+                    return;
+                }
+
+                if (textKP.Text == "")
+                {
+                    MessageBox.Show("Kode Prodi harus diisi");
+                    textKP.Focus();
+                    return;
+                }
+
+                string query = @"INSERT INTO Mahasiswa
+                        (NIM, Nama, JenisKelamin, TanggalLahir, Alamat, KodeProdi, TanggalDaftar)
+                        VALUES
+                        (@NIM, @Nama, @JK, @TanggalLahir, @Alamat, @KodeProdi, @TanggalDaftar)";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+
         }
 
         private void label1_Click(object sender, EventArgs e)
