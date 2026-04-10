@@ -154,7 +154,10 @@ namespace CRUDMahasiswaADO
                     MessageBox.Show("Data gagal ditambahkan");
                 }
             }
-
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan: " + ex.Message);
+            }
         }
 
         private void label1_Click(object sender, EventArgs e)
