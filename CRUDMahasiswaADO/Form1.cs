@@ -133,6 +133,28 @@ namespace CRUDMahasiswaADO
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
+                cmd.Parameters.AddWithValue("@NIM", textNIM.Text);
+                cmd.Parameters.AddWithValue("@Nama", textNama.Text);
+                cmd.Parameters.AddWithValue("@JK", comboBoxJK.Text);
+                cmd.Parameters.AddWithValue("@TanggalLahir", dtpTL.Value.Date);
+                cmd.Parameters.AddWithValue("@Alamat", textAlamat.Text);
+                cmd.Parameters.AddWithValue("@KodeProdi", textKP.Text);
+                cmd.Parameters.AddWithValue("@TanggalDaftar", DateTime.Now);
+
+                int result = cmd.ExecuteNonQuery();
+
+                if (result > 0)
+                {
+                    MessageBox.Show("Data mahasiswa berhasil ditambahkan");
+                    ClearForm();
+                    btnLoad.PerformClick();
+                }
+                else
+                {
+                    MessageBox.Show("Data gagal ditambahkan");
+                }
+            }
+
         }
 
         private void label1_Click(object sender, EventArgs e)
