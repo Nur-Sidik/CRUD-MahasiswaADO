@@ -44,6 +44,24 @@ namespace CRUDMahasiswaADO
             ConnectDatabase();
         }
 
+        private void buttonload_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (conn.State == System.Data.ConnectionState.Closed)
+                { 
+                    conn.Open();
+                }
+
+                dataGridView1.Rows.Clear();
+                dataGridView1.Columns.Clear();
+
+                dataGridView1.Columns.Add("NIM", "NIM");
+
+            }
+
+        }
+
         private void label1_Click(object sender, EventArgs e)
         {
 

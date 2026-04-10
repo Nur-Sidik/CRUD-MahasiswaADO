@@ -39,7 +39,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.buttonload = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
@@ -149,14 +149,15 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
+            // buttonload
             // 
-            this.button2.Location = new System.Drawing.Point(403, 54);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(134, 23);
-            this.button2.TabIndex = 11;
-            this.button2.Text = "Menampilkan Data";
-            this.button2.UseVisualStyleBackColor = true;
+            this.buttonload.Location = new System.Drawing.Point(403, 54);
+            this.buttonload.Name = "buttonload";
+            this.buttonload.Size = new System.Drawing.Size(134, 23);
+            this.buttonload.TabIndex = 11;
+            this.buttonload.Text = "Menampilkan Data";
+            this.buttonload.UseVisualStyleBackColor = true;
+            this.buttonload.Click += new System.EventHandler(this.buttonload_Click);
             // 
             // label6
             // 
@@ -224,7 +225,7 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.textBox4);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.buttonload);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label5);
@@ -258,7 +259,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button buttonload;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Button button3;
