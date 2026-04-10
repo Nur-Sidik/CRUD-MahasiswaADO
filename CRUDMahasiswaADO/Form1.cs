@@ -205,6 +205,89 @@ namespace CRUDMahasiswaADO
             }
         }
 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (conn.State == System.Data.ConnectionState.Closed)
+                {
+                    conn.Open();
+                }
+
+                DialogResult resultConfirm = MessageBox.Show(
+                    "Yakin ingin menghapus data?",
+                    "Konfirmasi",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (resultConfirm == DialogResult.Yes)
+                {
+                    string query = "DELETE FROM Mahasiswa WHERE NIM = @NIM";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@NIM", textNIM.Text);
+
+                    int result = cmd.ExecuteNonQuery();
+
+                    if (result > 0)
+                    {
+                        MessageBox.Show("Data berhasil dihapus");
+                        ClearForm();
+                        btnLoad.PerformClick();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Data tidak ditemukan");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan: " + ex.Message);
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+
+                textNIM.Text = row.Cells["NIM"].Value.ToString();
+                textNama.Text = row.Cells["Nama"].Value.ToString();
+                comboBoxJK.Text = row.Cells["JenisKelamin"].Value.ToString();
+                dtpTL.Value = Convert.ToDateTime(row.Cells["TanggalLahir"].Value);
+                textAlamat.Text = row.Cells["Alamat"].Value.ToString();
+                textKP.Text = row.Cells["KodeProdi"].Value.ToString();
+            }
+        }
+
+        private void ClearForm()
+        {
+            textNIM.Clear();
+            textNIM.Clear();
+            textNama.Clear();
+            comboBoxJK.SelectedIndex = -1;
+            dtpTL.Value = DateTime.Now;
+            textAlamat.Clear();
+            textKP.Clear();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            comboBoxJK.Items.Clear();
+            comboBoxJK.Items.Add("L");
+            comboBoxJK.Items.Add("P");
+
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.MultiSelect = false;
+            dataGridView1.ReadOnly = true;
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            dataGridView1.CellClick += dataGridView1_CellContentClick;
+        }
+
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -236,21 +319,6 @@ namespace CRUDMahasiswaADO
         }
 
         private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
