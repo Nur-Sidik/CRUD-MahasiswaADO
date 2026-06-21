@@ -1,14 +1,15 @@
-﻿using System;
+﻿using ExcelDataReader;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
 using System.Windows.Forms;
-using System.IO;
 
 namespace CRUDMahasiswaADO
 {
@@ -280,12 +281,110 @@ namespace CRUDMahasiswaADO
 
         private void btnUpload_Click(object sender, EventArgs e)
         {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
 
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                fotoMHS.Image = Image.FromFile(ofd.FileName);
+                fotoMHS.SizeMode = PictureBoxSizeMode.StretchImage;
+            }
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnImpExcel_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "Excel Workbook|*.xlsx" })
+            {
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = openFileDialog.FileName;
+                    using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var reader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream))
+                        {
+                            var result = reader.AsDataSet(new ExcelDataReader.ExcelDataSetConfiguration()
+                            {
+                                ConfigureDataTable = (_) => new ExcelDataReader.ExcelDataTableConfiguration()
+                                {
+                                    UseHeaderRow = true
+                                }
+                            });
+
+                            DataTable dtExcel = result.Tables[0];
+                            dataGridView1.DataSource = dtExcel;
+                            dataGridView1.Enabled = false;
+
+                            btnImpDb.Enabled = true;
+                            buttoninsert.Enabled = false;
+                            button4.Enabled = false;
+                            button5.Enabled = false;
+                            buttonload.Enabled = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void btnImpDb_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataTable dt = (DataTable)dataGridView1.DataSource;
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    MessageBox.Show("Tidak ada data untuk diimport.");
+                    return;
+                }
+
+                int sukses = 0;
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    string nim = row["NIM"].ToString().Trim();
+                    string nama = row["Nama"].ToString().Trim();
+                    string jk = row["JenisKelamin"].ToString().Trim();
+                    string alamat = row["Alamat"].ToString().Trim();
+                    string namaProdi = row["NamaProdi"].ToString().Trim();
+
+                    if (string.IsNullOrEmpty(nim) || string.IsNullOrEmpty(nama))
+                        continue;
+
+                    DateTime tglLahir;
+                    if (!DateTime.TryParse(row["TanggalLahir"].ToString(), out tglLahir))
+                        continue;
+
+                    // NamaProdi dari Excel perlu di-convert ke KodeProdi
+                    string kodeProdi = namaProdi == "Teknik Informatika" ? "TI01" :
+                                        namaProdi == "Sistem Informasi" ? "SI01" : null;
+
+                    if (kodeProdi == null)
+                        continue;
+
+                    dbLogic.InsertMhs(nim, nama, alamat, jk, tglLahir, kodeProdi, null);
+                    sukses++;
+                }
+
+                MessageBox.Show($"Berhasil import {sukses} data mahasiswa.");
+
+                dataGridView1.Enabled = true;
+                btnImpDb.Enabled = false;
+                buttoninsert.Enabled = true;
+                button4.Enabled = true;
+                button5.Enabled = true;
+                buttonload.Enabled = true;
+
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal import ke database: " + ex.Message);
+            }
         }
     }
 }

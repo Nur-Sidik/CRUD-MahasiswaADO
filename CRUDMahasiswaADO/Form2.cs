@@ -87,13 +87,11 @@ namespace CRUDMahasiswaADO
 
                 if (dtMahasiswa.Rows.Count > 0)
                 {
-
-                    BtnReport.Enabled = true;
+                    btnCetak.Enabled = true;
                 }
                 else
                 {
-
-                    BtnReport.Enabled = false;
+                    btnCetak.Enabled = false;
                     MessageBox.Show("Data tidak ditemukan");
                 }
             }

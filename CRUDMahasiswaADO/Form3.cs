@@ -50,7 +50,20 @@ namespace CRUDMahasiswaADO
 
                 conn.Close();
 
-                rptMhs.SetDataSource(dtMahasiswa);
+                List<ClassReport> listData = new List<ClassReport>();
+                foreach (DataRow row in dtMahasiswa.Rows)
+                {
+                    listData.Add(new ClassReport
+                    {
+                        Nama = row["Nama"].ToString(),
+                        JenisKelamin = row["JenisKelamin"].ToString(),
+                        Alamat = row["Alamat"].ToString(),
+                        NamaProdi = row["NamaProdi"].ToString(),
+                        TanggalDaftar = Convert.ToDateTime(row["TanggalDaftar"])
+                    });
+                }
+
+                rptMhs.SetDataSource(listData);
 
                 crystalReportViewer1.ReportSource = rptMhs;
                 crystalReportViewer1.Refresh();
