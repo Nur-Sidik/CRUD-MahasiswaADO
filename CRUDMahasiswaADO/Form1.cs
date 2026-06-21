@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using System.IO
+using System.IO;
 
 namespace CRUDMahasiswaADO
 {
@@ -72,15 +72,22 @@ namespace CRUDMahasiswaADO
             }
         }
 
+        private byte[] ConvertImageToBytes(PictureBox pb)
+        {
+            if (pb.Image == null)
+                return null;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                pb.Image.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                return ms.ToArray();
+            }
+        }
+
         private void button3_Click(object sender, EventArgs e)
         {
             try
             {
-                if (conn.State == System.Data.ConnectionState.Closed)
-                {
-                    conn.Open();
-                }
-
                 if (textNIM.Text == "")
                 {
                     MessageBox.Show("NIM harus diisi");
@@ -109,33 +116,14 @@ namespace CRUDMahasiswaADO
                     return;
                 }
 
-                string query = @"INSERT INTO Mahasiswa
-                        (NIM, Nama, JenisKelamin, TanggalLahir, Alamat, KodeProdi, TanggalDaftar)
-                        VALUES
-                        (@NIM, @Nama, @JK, @TanggalLahir, @Alamat, @KodeProdi, @TanggalDaftar)";
+                byte[] imgBytes = ConvertImageToBytes(fotoMHS);
 
-                SqlCommand cmd = new SqlCommand(query, conn);
+                dbLogic.InsertMhs(textNIM.Text, textNama.Text, textAlamat.Text,
+                    comboBoxJK.Text, dtpTL.Value.Date, textKP.Text, imgBytes);
 
-                cmd.Parameters.AddWithValue("@NIM", textNIM.Text);
-                cmd.Parameters.AddWithValue("@Nama", textNama.Text);
-                cmd.Parameters.AddWithValue("@JK", comboBoxJK.Text);
-                cmd.Parameters.AddWithValue("@TanggalLahir", dtpTL.Value.Date);
-                cmd.Parameters.AddWithValue("@Alamat", textAlamat.Text);
-                cmd.Parameters.AddWithValue("@KodeProdi", textKP.Text);
-                cmd.Parameters.AddWithValue("@TanggalDaftar", DateTime.Now);
-
-                int result = cmd.ExecuteNonQuery();
-
-                if (result > 0)
-                {
-                    MessageBox.Show("Data mahasiswa berhasil ditambahkan");
-                    ClearForm();
-                    buttonload.PerformClick();
-                }
-                else
-                {
-                    MessageBox.Show("Data gagal ditambahkan");
-                }
+                MessageBox.Show("Data mahasiswa berhasil ditambahkan");
+                ClearForm();
+                buttonload.PerformClick();
             }
             catch (Exception ex)
             {
@@ -147,40 +135,14 @@ namespace CRUDMahasiswaADO
         {
             try
             {
-                if (conn.State == System.Data.ConnectionState.Closed)
-                {
-                    conn.Open();
-                }
+                byte[] imgBytes = ConvertImageToBytes(fotoMHS);
 
-                string query = @"UPDATE Mahasiswa
-                                SET Nama = @Nama,
-                                JenisKelamin = @JK,
-                                TanggalLahir = @TanggalLahir,
-                                Alamat = @Alamat,
-                                KodeProdi = @KodeProdi
-                                WHERE NIM = @NIM";
+                dbLogic.UpdateMhs(textNIM.Text, textNama.Text, textAlamat.Text,
+                    comboBoxJK.Text, dtpTL.Value.Date, textKP.Text, imgBytes);
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-
-                cmd.Parameters.AddWithValue("@NIM", textNIM.Text);
-                cmd.Parameters.AddWithValue("@Nama", textNama.Text);
-                cmd.Parameters.AddWithValue("@JK", comboBoxJK.Text);
-                cmd.Parameters.AddWithValue("@TanggalLahir", dtpTL.Value.Date);
-                cmd.Parameters.AddWithValue("@Alamat", textAlamat.Text);
-                cmd.Parameters.AddWithValue("@KodeProdi", textKP.Text);
-
-                int result = cmd.ExecuteNonQuery();
-
-                if (result > 0)
-                {
-                    MessageBox.Show("Data berhasil diupdate");
-                    ClearForm();
-                    buttonload.PerformClick();
-                }
-                else
-                {
-                    MessageBox.Show("Data tidak ditemukan");
-                }
+                MessageBox.Show("Data berhasil diupdate");
+                ClearForm();
+                buttonload.PerformClick();
             }
             catch (Exception ex)
             {
@@ -192,11 +154,6 @@ namespace CRUDMahasiswaADO
         {
             try
             {
-                if (conn.State == System.Data.ConnectionState.Closed)
-                {
-                    conn.Open();
-                }
-
                 DialogResult resultConfirm = MessageBox.Show(
                     "Yakin ingin menghapus data?",
                     "Konfirmasi",
@@ -205,23 +162,11 @@ namespace CRUDMahasiswaADO
 
                 if (resultConfirm == DialogResult.Yes)
                 {
-                    string query = "DELETE FROM Mahasiswa WHERE NIM = @NIM";
+                    dbLogic.DeleteMhs(textNIM.Text);
 
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@NIM", textNIM.Text);
-
-                    int result = cmd.ExecuteNonQuery();
-
-                    if (result > 0)
-                    {
-                        MessageBox.Show("Data berhasil dihapus");
-                        ClearForm();
-                        buttonload.PerformClick();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Data tidak ditemukan");
-                    }
+                    MessageBox.Show("Data berhasil dihapus");
+                    ClearForm();
+                    buttonload.PerformClick();
                 }
             }
             catch (Exception ex)
@@ -242,6 +187,20 @@ namespace CRUDMahasiswaADO
                 dtpTL.Value = Convert.ToDateTime(row.Cells["TanggalLahir"].Value);
                 textAlamat.Text = row.Cells["Alamat"].Value.ToString();
                 textKP.Text = row.Cells["KodeProdi"].Value.ToString();
+
+                if (row.Cells["Foto"].Value != DBNull.Value && row.Cells["Foto"].Value != null)
+                {
+                    byte[] imgBytes = (byte[])row.Cells["Foto"].Value;
+                    using (MemoryStream ms = new MemoryStream(imgBytes))
+                    {
+                        fotoMHS.Image = Image.FromStream(ms);
+                        fotoMHS.SizeMode = PictureBoxSizeMode.StretchImage;
+                    }
+                }
+                else
+                {
+                    fotoMHS.Image = null;
+                }
             }
         }
 
@@ -258,8 +217,6 @@ namespace CRUDMahasiswaADO
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'dBAkademikADODataSet.Mahasiswa' table. You can move, or remove it, as needed.
-            this.mahasiswaTableAdapter.Fill(this.dBAkademikADODataSet.Mahasiswa);
             comboBoxJK.Items.Clear();
             comboBoxJK.Items.Add("L");
             comboBoxJK.Items.Add("P");
@@ -268,9 +225,10 @@ namespace CRUDMahasiswaADO
             dataGridView1.MultiSelect = false;
             dataGridView1.ReadOnly = true;
             dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
             dataGridView1.CellClick += dataGridView1_CellContentClick;
+
+            LoadData();
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -321,6 +279,11 @@ namespace CRUDMahasiswaADO
         }
 
         private void btnUpload_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
         {
 
         }

@@ -66,14 +66,14 @@
             this.btndata = new System.Windows.Forms.Button();
             this.btnImpExcel = new System.Windows.Forms.Button();
             this.btnImpDb = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.fotoMHS = new System.Windows.Forms.PictureBox();
             this.btnUpload = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mahasiswaBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dBAkademikADODataSet)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).BeginInit();
             this.bindingNavigator1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fotoMHS)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -407,13 +407,14 @@
             this.btnImpDb.Text = "Import to Database";
             this.btnImpDb.UseVisualStyleBackColor = true;
             // 
-            // pictureBox1
+            // fotoMHS
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(484, 117);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(134, 153);
-            this.pictureBox1.TabIndex = 23;
-            this.pictureBox1.TabStop = false;
+            this.fotoMHS.Location = new System.Drawing.Point(484, 117);
+            this.fotoMHS.Name = "fotoMHS";
+            this.fotoMHS.Size = new System.Drawing.Size(134, 153);
+            this.fotoMHS.TabIndex = 23;
+            this.fotoMHS.TabStop = false;
+            this.fotoMHS.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // btnUpload
             // 
@@ -431,7 +432,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 533);
             this.Controls.Add(this.btnUpload);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.fotoMHS);
             this.Controls.Add(this.btnImpDb);
             this.Controls.Add(this.btnImpExcel);
             this.Controls.Add(this.btndata);
@@ -463,7 +464,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator1)).EndInit();
             this.bindingNavigator1.ResumeLayout(false);
             this.bindingNavigator1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fotoMHS)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -507,7 +508,7 @@
         private System.Windows.Forms.Button btndata;
         private System.Windows.Forms.Button btnImpExcel;
         private System.Windows.Forms.Button btnImpDb;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox fotoMHS;
         private System.Windows.Forms.Button btnUpload;
     }
 }
