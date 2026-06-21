@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using System.IO
 
 namespace CRUDMahasiswaADO
 {
@@ -15,6 +16,7 @@ namespace CRUDMahasiswaADO
     {
         private readonly SqlConnection conn;
         private readonly string connectionString = "Data Source=MSI\\UNKNOWNMEMBER;Initial Catalog=DBAkademikADO; Integrated Security=True";
+        DAL dbLogic = new DAL();
 
         public Form1()
         {
@@ -46,47 +48,28 @@ namespace CRUDMahasiswaADO
 
         private void buttonload_Click(object sender, EventArgs e)
         {
+            LoadData();
+        }
+
+        private void LoadData()
+        {
             try
             {
-                if (conn.State == System.Data.ConnectionState.Closed)
-                { 
-                    conn.Open();
-                }
+                DataTable dt = dbLogic.GetMhs();
+                dataGridView1.DataSource = dt;
 
-                dataGridView1.Rows.Clear();
-                dataGridView1.Columns.Clear();
-
-                dataGridView1.Columns.Add("NIM", "NIM");
-                dataGridView1.Columns.Add("Nama", "Nama");
-                dataGridView1.Columns.Add("JenisKelamin", "Jenis Kelamin");
-                dataGridView1.Columns.Add("TanggalLahir", "Tanggal Lahir");
-                dataGridView1.Columns.Add("Alamat", "Alamat");
-                dataGridView1.Columns.Add("KodeProdi", "Kode Prodi");
-
-                string query = "SELECT * FROM Mahasiswa";
-
-                SqlCommand cnd = new SqlCommand(query, conn);
-                SqlDataReader reader = cnd.ExecuteReader();
-
-                while (reader.Read())
+                if (dataGridView1.Columns["Foto"] != null)
                 {
-                    dataGridView1.Rows.Add(
-                        reader["NIM"].ToString(),
-                        reader["Nama"].ToString(),
-                        reader["JenisKelamin"].ToString(),
-                        Convert.ToDateTime(reader["TanggalLahir"]).ToShortDateString(),
-                        reader["Alamat"].ToString(),
-                        reader["KodeProdi"].ToString()
-                    );
+                    DataGridViewImageColumn fotoColumn = (DataGridViewImageColumn)dataGridView1.Columns["Foto"];
+                    fotoColumn.ImageLayout = DataGridViewImageCellLayout.Stretch;
                 }
 
-                reader.Close();
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Gagal menampilkan data: " + ex.Message);
+                MessageBox.Show("Gagal load data: " + ex.Message);
             }
-
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -147,7 +130,7 @@ namespace CRUDMahasiswaADO
                 {
                     MessageBox.Show("Data mahasiswa berhasil ditambahkan");
                     ClearForm();
-                    btnLoad.PerformClick();
+                    buttonload.PerformClick();
                 }
                 else
                 {
@@ -192,7 +175,7 @@ namespace CRUDMahasiswaADO
                 {
                     MessageBox.Show("Data berhasil diupdate");
                     ClearForm();
-                    btnLoad.PerformClick();
+                    buttonload.PerformClick();
                 }
                 else
                 {
@@ -233,7 +216,7 @@ namespace CRUDMahasiswaADO
                     {
                         MessageBox.Show("Data berhasil dihapus");
                         ClearForm();
-                        btnLoad.PerformClick();
+                        buttonload.PerformClick();
                     }
                     else
                     {
@@ -275,6 +258,8 @@ namespace CRUDMahasiswaADO
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // TODO: This line of code loads data into the 'dBAkademikADODataSet.Mahasiswa' table. You can move, or remove it, as needed.
+            this.mahasiswaTableAdapter.Fill(this.dBAkademikADODataSet.Mahasiswa);
             comboBoxJK.Items.Clear();
             comboBoxJK.Items.Add("L");
             comboBoxJK.Items.Add("P");
@@ -324,6 +309,18 @@ namespace CRUDMahasiswaADO
         }
 
         private void textNIM_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btndata_Click(object sender, EventArgs e)
+        {
+            Form2 fm3 = new Form2();
+            fm3.Show();
+            this.Hide();
+        }
+
+        private void btnUpload_Click(object sender, EventArgs e)
         {
 
         }
